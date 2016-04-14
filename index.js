@@ -19,7 +19,7 @@ function memorize(fn, _hasher, _ttl) {
   const map = new Map();
   const ttl = get(util.isNumber, [_hasher, _ttl], 0);
   const hasher = get(util.isFunction, [_hasher, _ttl], identity);
-  var memorizeFn = function memorizeFn() {
+  const memorizeFn = function memorizeFn() {
     const args = Array.from(arguments);
     const key = hasher.apply(null, args);
     const item = map.get(key);
@@ -44,7 +44,13 @@ function memorize(fn, _hasher, _ttl) {
     }
     return p;
   };
-
+  memorizeFn.unmemorized = fn;
+  memorizeFn.delete = (key) => {
+    map.delete(key);
+  };
+  memorizeFn.clear = () => {
+    map.clear();
+  };
   return memorizeFn;
 }
 

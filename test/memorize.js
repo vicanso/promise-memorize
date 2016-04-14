@@ -80,7 +80,31 @@ describe('promise-memorize', () => {
       assert.equal(count, 1);
       done();
     }).catch(done);
+  });
 
+  it('delete and clear cache', (done) => {
+    let count = 0;
+    const originalGet = (id) => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve(count++);
+        }, 10);
+      });
+    };
+    const get = memorize(originalGet, 100);
+    const id = 'vicanso';
+    get(id).then(count => {
+      assert.equal(count, 0);
+      get.delete(id)
+      return get(id);
+    }).then(count => {
+      assert.equal(count, 1);
+      get.clear();
+      return get(id);
+    }).then(count => {
+      assert.equal(count, 2);
+      done();
+    }).catch(done);
   });
 
 });
