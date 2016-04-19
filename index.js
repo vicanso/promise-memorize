@@ -51,6 +51,28 @@ function memorize(fn, _hasher, _ttl) {
   memorizeFn.clear = () => {
     map.clear();
   };
+  memorizeFn.size = () => map.size;
+  let timer;
+  const periodicClear = () => {
+    const iter = map.entries();
+    const now = Date.now();
+    let arr = iter.next().value;
+    while (arr) {
+      const key = arr[0];
+      const value = arr[1];
+      if (value.createdAt + ttl < now) {
+        map.delete(key);
+      }
+      arr = iter.next().value;
+    }
+  };
+  memorizeFn.periodicClear = (interval) => {
+    if (timer) {
+      clearInterval(timer);
+    }
+    timer = setInterval(periodicClear, interval).unref();
+    return timer;
+  };
   return memorizeFn;
 }
 

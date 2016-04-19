@@ -14,6 +14,8 @@ $ npm install promise-memorize
 
 ## API
 
+### memorize
+
 - `hasher` generate cache key, default is use the first parameter for key
 
 - `ttl` cache ttl, default is `0`
@@ -93,6 +95,81 @@ cacheGetProducts('My-Category', 'My-Type').then((products) => {
 // call 3, not the same prmoise as call 1
 cacheGetProducts('My-Category', 'My-A-Type').then((products) => {
   
+});
+```
+
+### memorize.unmemorized
+
+get original function
+
+```js
+const memorize = require('promise-memorize');
+const get = function() {
+  // .....
+};
+const cacheGet = memorize(get);
+// cacheGet.unmemorized === get
+```
+
+### delete
+
+- `key` delete cache promise
+
+```js
+const memorize = require('promise-memorize');
+const get = function() {
+  // .....
+};
+const cacheGet = memorize(get, 10 * 1000);
+cacheGet('vicanso').then((data) => {
+  // after get the data, the remove the promise from cache
+  cacheGet.delete('vicanso');
+});
+```
+
+### clear
+
+```js
+const memorize = require('promise-memorize');
+const get = function() {
+  // .....
+};
+const cacheGet = memorize(get, 10 * 1000);
+cacheGet('vicanso').then((data) => {
+  // after get the data, the clear all the promise from cache
+  cacheGet.clear();
+});
+```
+
+### size
+
+```js
+const memorize = require('promise-memorize');
+const get = function() {
+  // .....
+};
+const cacheGet = memorize(get, 10 * 1000);
+cacheGet('vicanso').then((data) => {
+  // size is 1
+  cacheGet.size();
+});
+```
+### periodicClear
+
+Set interval to check whether the promise is expired in order to avoid memory leak 
+
+- `interval` chcek interval
+
+```js
+const memorize = require('promise-memorize');
+const get = function() {
+  // .....
+};
+const cacheGet = memorize(get, 10 * 1000);
+cacheGet.periodicClear(10 * 1000);
+cacheGet('vicanso').then((data) => {
+  // size is 1
+  cacheGet.size();
 });
 ```
 

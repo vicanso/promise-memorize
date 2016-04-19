@@ -129,4 +129,25 @@ describe('promise-memorize', () => {
     }).catch(done);
   });
 
+
+  it('set periodic clear', (done) => {
+    const originalGet = (id) => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve(0);
+        }, 10);
+      });
+    };
+    const get = memorize(originalGet, 50);
+    get.periodicClear(10);
+    const id = 'vicanso';
+    get(id).then(count => {
+      assert.equal(get.size(), 1);
+      setTimeout(() => {
+        assert.equal(get.size(), 0);
+        done();
+      }, 100);
+    }).catch(done);
+  });
+
 });
