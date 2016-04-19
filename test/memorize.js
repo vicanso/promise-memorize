@@ -33,6 +33,28 @@ describe('promise-memorize', () => {
     }).catch(done);
   });
 
+  it('throw an error', (done) => {
+    let count = 0;
+    const originalGet = () => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error('fail'));
+        }, 10);
+      });
+    };
+    const get = memorize(originalGet);
+    const complete = (err) => {
+      assert.equal(err.message, 'fail');
+      count++;
+      if (count === 2) {
+        done();
+      }
+    };
+
+    get().catch(complete);
+    get().catch(complete);
+  })
+
   it('cache promise with ttl', (done) => {
     let count = 0;
     const originalGet = () => {
@@ -55,7 +77,7 @@ describe('promise-memorize', () => {
     }).catch(done);
   });
 
-  it('cache promise with custon hasher', (done) => {
+  it('cache promise with custom hasher', (done) => {
     let count = 0;
     const originalGet = (name, id) => {
       return new Promise(resolve => {

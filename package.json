@@ -1,6 +1,6 @@
 {
   "name": "promise-memorize",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "cache prmoise result for high-performance",
   "keywords": [
     "promise",
@@ -19,8 +19,8 @@
   },
   "readmeFilename": "README.md",
   "devDependencies": {
-    "eslint": "^2.5.1",
-    "eslint-config-airbnb": "^6.2.0",
+    "eslint": "^2.8.0",
+    "eslint-config-airbnb": "^7.0.0",
     "istanbul": "^0.4.2",
     "mocha": "^2.4.5",
     "superagent": "^1.8.3"
