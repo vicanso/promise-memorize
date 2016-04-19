@@ -28,7 +28,7 @@ function memorize(fn, _hasher, _ttl) {
     if (item && (!ttl || (now - item.createdAt < ttl))) {
       return item.promise;
     }
-    const p = fn();
+    const p = fn.apply(this, args);
     map.set(key, {
       promise: p,
       createdAt: now,
