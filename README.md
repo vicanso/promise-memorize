@@ -5,7 +5,7 @@
 [![npm](http://img.shields.io/npm/v/promise-memorize.svg?style=flat-square)](https://www.npmjs.org/package/promise-memorize)
 [![Github Releases](https://img.shields.io/npm/dm/promise-memorize.svg?style=flat-square)](https://github.com/vicanso/promise-memorize)
 
-Cache prmoise result for high-performance
+Cache promise result for high-performance
 
 ## Examples
 
