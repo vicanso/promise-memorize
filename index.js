@@ -1,6 +1,6 @@
 'use strict';
 const util = require('util');
-
+const EventEmitter = require('events');
 function identity(value) {
   return value;
 }
@@ -19,6 +19,7 @@ function memorize(fn, _hasher, _ttl) {
   const map = new Map();
   const ttl = get(util.isNumber, [_hasher, _ttl], 0);
   const hasher = get(util.isFunction, [_hasher, _ttl], identity);
+  const emitter = new EventEmitter();
   const memorizeFn = function memorizeFn() {
     const args = Array.from(arguments);
     const key = hasher.apply(null, args);
@@ -33,23 +34,33 @@ function memorize(fn, _hasher, _ttl) {
       promise: p,
       createdAt: now,
     });
-    if (!ttl) {
-      p.then((data) => {
-        map.delete(key);
-        return data;
-      }, (err) => {
-        map.delete(key);
-        throw err;
-      });
-    }
+    memorizeFn.emit('add', key);
+    p.then((data) => {
+      memorizeFn.emit('resolve', key);
+      if (!ttl) {
+        memorizeFn.delete(key);
+      }
+      return data;
+    }, (err) => {
+      memorizeFn.emit('reject', key);
+      if (!ttl) {
+        memorizeFn.delete(key);
+      }
+      throw err;
+    });
+
     return p;
   };
   memorizeFn.unmemorized = fn;
   memorizeFn.delete = (key) => {
-    map.delete(key);
+    /* istanbul ignore else */
+    if (map.get(key)) {
+      memorizeFn.emit('delete', key);
+      return map.delete(key);
+    }
   };
   memorizeFn.clear = () => {
-    map.clear();
+    return map.clear();
   };
   memorizeFn.size = () => map.size;
   let timer;
@@ -67,12 +78,18 @@ function memorize(fn, _hasher, _ttl) {
     }
   };
   memorizeFn.periodicClear = (interval) => {
+    /* istanbul ignore if */
     if (timer) {
       clearInterval(timer);
     }
     timer = setInterval(periodicClear, interval).unref();
     return timer;
   };
+  Object.getOwnPropertyNames(EventEmitter.prototype).forEach(name => {
+    if (name !== 'constructor' && util.isFunction(emitter[name])) {
+      memorizeFn[name] = emitter[name].bind(emitter);
+    }
+  });
   return memorizeFn;
 }
 

@@ -22,29 +22,18 @@ function getStock(code, start, end, period) {
 const memorizeGetStock = memorize(getStock, (code, start, end, period) => {
   return `${code}-${start}-${end}-${period}`;
 }, 10 * 1000);
-
-memorizeGetStock.on('add', key => {
-  console.info(`${key} add to cache`);
-});
-memorizeGetStock.on('delete', key => {
-  console.info(`${key} delete from cache`);
-});
-memorizeGetStock.on('resolve', key => {
-  console.info(`${key} resolve`);
-});
+// delete cache when promise reject
 memorizeGetStock.on('reject', key => {
-  console.info(`${key} reject`);
+  memorizeGetStock.delete(key);
 });
 
-
-memorizeGetStock('600000.SS', '2016-01-01', '2016-03-31', 'd').then((csv) => {
+memorizeGetStock('6a0000.SS', '2016-10-01', '2016-03-31', 'd').then((csv) => {
   console.info('day data size:%d', csv.length);
-}).catch(console.error);
-
-memorizeGetStock('600000.SS', '2016-01-01', '2016-03-31', 'd').then((csv) => {
-  console.info('day data size:%d', csv.length);
-}).catch(console.error);
-
-memorizeGetStock('600000.SS', '2016-01-01', '2016-03-31', 'w').then((csv) => {
-  console.info('week data size:%d', csv.length);
-}).catch(console.error);
+}).catch(err => {
+  console.error(err.message);
+  memorizeGetStock('6a0000.SS', '2016-10-01', '2016-03-31', 'd').then((csv) => {
+    console.info('day data size:%d', csv.length);
+  }).catch(err => {
+    console.error(err.message);
+  });
+});

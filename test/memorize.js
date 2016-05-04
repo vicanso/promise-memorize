@@ -33,7 +33,7 @@ describe('promise-memorize', () => {
     }).catch(done);
   });
 
-  it('throw an error', (done) => {
+  it('throw an error', done => {
     let count = 0;
     const originalGet = () => {
       return new Promise((resolve, reject) => {
@@ -55,7 +55,7 @@ describe('promise-memorize', () => {
     get().catch(complete);
   })
 
-  it('cache promise with ttl', (done) => {
+  it('cache promise with ttl', done => {
     let count = 0;
     const originalGet = () => {
       return new Promise(resolve => {
@@ -77,7 +77,7 @@ describe('promise-memorize', () => {
     }).catch(done);
   });
 
-  it('cache promise with custom hasher', (done) => {
+  it('cache promise with custom hasher', done => {
     let count = 0;
     const originalGet = (name, id) => {
       return new Promise(resolve => {
@@ -104,7 +104,7 @@ describe('promise-memorize', () => {
     }).catch(done);
   });
 
-  it('delete and clear cache', (done) => {
+  it('delete and clear cache', done => {
     let count = 0;
     const originalGet = (id) => {
       return new Promise(resolve => {
@@ -130,7 +130,7 @@ describe('promise-memorize', () => {
   });
 
 
-  it('set periodic clear', (done) => {
+  it('set periodic clear', done => {
     const originalGet = (id) => {
       return new Promise(resolve => {
         setTimeout(() => {
@@ -148,6 +148,29 @@ describe('promise-memorize', () => {
         done();
       }, 100);
     }).catch(done);
+  });
+
+  it('addListener', done => {
+    const originalGet = (id) => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve(0);
+        }, 10);
+      });
+    };
+    const get = memorize(originalGet, 50);
+    get.on('add', key => {
+      assert.equal(key, id);
+    });
+    get.on('delete', key => {
+      assert.equal(key, id);
+      done();
+    });
+    const id = 'vicanso';
+    get(id).then(count => {
+      assert.equal(count, 0);
+      get.delete(id);
+    });
   });
 
 });
