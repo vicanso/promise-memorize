@@ -53,15 +53,14 @@ function memorize(fn, _hasher, _ttl) {
   };
   memorizeFn.unmemorized = fn;
   memorizeFn.delete = (key) => {
-    /* istanbul ignore else */
-    if (map.get(key)) {
-      memorizeFn.emit('delete', key);
-      return map.delete(key);
+    /* istanbul ignore if */
+    if (!map.get(key)) {
+      return null;
     }
+    memorizeFn.emit('delete', key);
+    return map.delete(key);
   };
-  memorizeFn.clear = () => {
-    return map.clear();
-  };
+  memorizeFn.clear = () => map.clear();
   memorizeFn.size = () => map.size;
   let timer;
   const periodicClear = () => {
