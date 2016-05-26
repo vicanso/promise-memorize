@@ -62,10 +62,10 @@ readFileMemo(file).then(buf => {
 ```
 
 ```bash
-[info] 2016-05-26T14:39:52.663Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:39:52.663Z get file:/promise-memorize/examples/fs.js encoding:undefined
 [info] 2016-05-26T14:39:52.666Z buf size:818
 [info] 2016-05-26T14:39:52.667Z buf size:818
-[info] 2016-05-26T14:39:52.668Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:39:52.668Z get file:/promise-memorize/examples/fs.js encoding:undefined
 [info] 2016-05-26T14:39:52.668Z buf size:818
 ```
 
@@ -102,7 +102,7 @@ readFileMemo(file).then(buf => {
 ```
 
 ```bash
-[info] 2016-05-26T14:40:16.117Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:40:16.117Z get file:/promise-memorize/examples/fs.js encoding:undefined
 [info] 2016-05-26T14:40:16.121Z buf size:829
 [info] 2016-05-26T14:40:16.122Z buf size:829
 [info] 2016-05-26T14:40:16.123Z buf size:829
@@ -144,9 +144,9 @@ readFileMemo(file, 'ascii').then(buf => {
 ```
 
 ```bash
-[info] 2016-05-26T14:40:39.429Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:utf8
+[info] 2016-05-26T14:40:39.429Z get file:/promise-memorize/examples/fs.js encoding:utf8
 [info] 2016-05-26T14:40:39.432Z buf size:912
-[info] 2016-05-26T14:40:39.433Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:ascii
+[info] 2016-05-26T14:40:39.433Z get file:/promise-memorize/examples/fs.js encoding:ascii
 [info] 2016-05-26T14:40:39.433Z buf size:912
 [info] 2016-05-26T14:40:39.433Z buf size:912
 ```
@@ -186,9 +186,9 @@ readFileMemo.unmemorized(file).then(buf => {
 
 ```bash
 [info] 2016-05-26T14:41:22.741Z true
-[info] 2016-05-26T14:41:22.746Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:41:22.746Z get file:/promise-memorize/examples/fs.js encoding:undefined
 [info] 2016-05-26T14:41:22.748Z buf size:821
-[info] 2016-05-26T14:41:22.748Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:41:22.748Z get file:/promise-memorize/examples/fs.js encoding:undefined
 [info] 2016-05-26T14:41:22.748Z buf size:821
 ```
 
@@ -226,9 +226,9 @@ readFileMemo(file).then(buf => {
 ```
 
 ```bash
-[info] 2016-05-26T14:41:41.459Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:41:41.459Z get file:/promise-memorize/examples/fs.js encoding:undefined
 [info] 2016-05-26T14:41:41.461Z buf size:783
-[info] 2016-05-26T14:41:41.463Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:41:41.463Z get file:/promise-memorize/examples/fs.js encoding:undefined
 [info] 2016-05-26T14:41:41.463Z buf size:783
 ```
 
@@ -264,9 +264,9 @@ readFileMemo(file).then(buf => {
 ```
 
 ```bash
-[info] 2016-05-26T14:41:59.607Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:41:59.607Z get file:/promise-memorize/examples/fs.js encoding:undefined
 [info] 2016-05-26T14:41:59.610Z buf size:778
-[info] 2016-05-26T14:41:59.612Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:41:59.612Z get file:/promise-memorize/examples/fs.js encoding:undefined
 [info] 2016-05-26T14:41:59.612Z buf size:778
 ```
 
@@ -299,7 +299,7 @@ readFileMemo(file).then(buf => {
 ```
 
 ```bash
-[info] 2016-05-26T14:42:16.935Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:42:16.935Z get file:/promise-memorize/examples/fs.js encoding:undefined
 [info] 2016-05-26T14:42:16.937Z buf size:722
 [info] 2016-05-26T14:42:16.938Z memorize size:1
 ```
@@ -342,7 +342,7 @@ setTimeout(() => {
 ```
 
 ```bash
-[info] 2016-05-26T14:42:32.977Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:42:32.977Z get file:/promise-memorize/examples/fs.js encoding:undefined
 [info] 2016-05-26T14:42:32.979Z buf size:851
 [info] 2016-05-26T14:42:32.980Z memorize size:1
 [info] 2016-05-26T14:42:44.981Z memorize size:0
@@ -398,11 +398,11 @@ readFileMemo(file).then(buf => {
 ```
 
 ```js
-[info] 2016-05-26T14:43:02.699Z add:/Users/tree/github/promise-memorize/examples/fs.js
-[info] 2016-05-26T14:43:02.703Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
-[info] 2016-05-26T14:43:02.705Z resolve:/Users/tree/github/promise-memorize/examples/fs.js
+[info] 2016-05-26T14:43:02.699Z add:/promise-memorize/examples/fs.js
+[info] 2016-05-26T14:43:02.703Z get file:/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:43:02.705Z resolve:/promise-memorize/examples/fs.js
 [info] 2016-05-26T14:43:02.705Z buf size:1004
-[info] 2016-05-26T14:43:02.705Z delete:/Users/tree/github/promise-memorize/examples/fs.js
+[info] 2016-05-26T14:43:02.705Z delete:/promise-memorize/examples/fs.js
 [info] 2016-05-26T14:43:02.706Z add:a.js
 [info] 2016-05-26T14:43:02.706Z get file:a.js encoding:undefined
 [info] 2016-05-26T14:43:02.707Z reject:a.js
