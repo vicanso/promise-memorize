@@ -33,49 +33,79 @@ Cache promise for parallel call
 
 ```js
 const memorize = require('promise-memorize');
-const getProduct = (id) => {
+const fs = require('fs');
+const path = require('path');
+const readFile = function(file, encoding) {
   return new Promise((resolve, reject) => {
-    // get product by id
+    fs.readFile(file, encoding, (err, data) => {
+      console.info(`get file:${file} encoding:${encoding}`);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
   });
-};
-// the parallel call will use the same promise
-const cacheGetProduct = memorize(getProduct);
+}
 
-// call 1 and call 2 use the same promise
-// call 1
-cacheGetProduct('Nike').then((data) => {
-  // call 3
-  cacheGetProduct('Nike').then((data) => {
-  });
+const readFileMemo = memorize(readFile);
+const file = path.join(__dirname, './fs.js');
+readFileMemo(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
 });
-// call 2
-cacheGetProduct('Nike').then((data) => {
-  
+readFileMemo(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
+  readFileMemo(file).then(buf => {
+    console.info(`buf size:${buf.length}`);
+  });
 });
 ```
 
-Cache promise with ttle
+```bash
+[info] 2016-05-26T14:39:52.663Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:39:52.666Z buf size:818
+[info] 2016-05-26T14:39:52.667Z buf size:818
+[info] 2016-05-26T14:39:52.668Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:39:52.668Z buf size:818
+```
+
+Cache promise with ttl
 
 ```js
 const memorize = require('promise-memorize');
-const getProduct = (id) => {
+const fs = require('fs');
+const path = require('path');
+const readFile = function(file, encoding) {
   return new Promise((resolve, reject) => {
-    // get product by id
+    fs.readFile(file, encoding, (err, data) => {
+      console.info(`get file:${file} encoding:${encoding}`);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
   });
-};
-// cache result for 10 s
-const cacheGetProduct = memorize(getProduct, 10 * 1000);
-// call 1, call 2 and call 3 use the same promise
-// call 1
-cacheGetProduct('Nike').then((data) => {
-  // call 3
-  cacheGetProduct('Nike').then((data) => {
+}
+
+const readFileMemo = memorize(readFile, 10 * 1000);
+const file = path.join(__dirname, './fs.js');
+readFileMemo(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
+});
+readFileMemo(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
+  readFileMemo(file).then(buf => {
+    console.info(`buf size:${buf.length}`);
   });
 });
-// call 2
-cacheGetProduct('Nike').then((data) => {
-  
-});
+```
+
+```bash
+[info] 2016-05-26T14:40:16.117Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:40:16.121Z buf size:829
+[info] 2016-05-26T14:40:16.122Z buf size:829
+[info] 2016-05-26T14:40:16.123Z buf size:829
 ```
 
 Cache promise with hasher and ttl
@@ -83,29 +113,44 @@ Cache promise with hasher and ttl
 
 ```js
 const memorize = require('promise-memorize');
-const getProducts = (category, type) => {
+const fs = require('fs');
+const path = require('path');
+const readFile = function(file, encoding) {
   return new Promise((resolve, reject) => {
-    // get product by category and type
+    fs.readFile(file, encoding, (err, data) => {
+      console.info(`get file:${file} encoding:${encoding}`);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
   });
-};
-const cacheGetProducts = memorize(getProduct, (category, type) => {
-  return `${category}-${type}`;
-},10 * 1000);
-// call 1 and call 2 use the same promise
+}
 
-// call 1
-cacheGetProducts('My-Category', 'My-Type').then((products) => {
-  
+const readFileMemo = memorize(readFile, (file, encoding) => {
+  return `${file}-${encoding}`;
+}, 10 * 1000);
+const file = path.join(__dirname, './fs.js');
+readFileMemo(file, 'utf8').then(buf => {
+  console.info(`buf size:${buf.length}`);
 });
-// call 2
-cacheGetProducts('My-Category', 'My-Type').then((products) => {
-  
-});
-// call 3, not the same prmoise as call 1
-cacheGetProducts('My-Category', 'My-A-Type').then((products) => {
-  
+readFileMemo(file, 'ascii').then(buf => {
+  console.info(`buf size:${buf.length}`);
+  readFileMemo(file, 'ascii').then(buf => {
+    console.info(`buf size:${buf.length}`);
+  });
 });
 ```
+
+```bash
+[info] 2016-05-26T14:40:39.429Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:utf8
+[info] 2016-05-26T14:40:39.432Z buf size:912
+[info] 2016-05-26T14:40:39.433Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:ascii
+[info] 2016-05-26T14:40:39.433Z buf size:912
+[info] 2016-05-26T14:40:39.433Z buf size:912
+```
+
 
 ### memorize.unmemorized
 
@@ -113,11 +158,38 @@ get original function
 
 ```js
 const memorize = require('promise-memorize');
-const get = function() {
-  // .....
-};
-const cacheGet = memorize(get);
-// cacheGet.unmemorized === get
+const fs = require('fs');
+const path = require('path');
+const readFile = function(file, encoding) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, encoding, (err, data) => {
+      console.info(`get file:${file} encoding:${encoding}`);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
+const readFileMemo = memorize(readFile, 10 * 1000);
+const file = path.join(__dirname, './fs.js');
+console.info(readFileMemo.unmemorized === readFile);
+readFileMemo.unmemorized(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
+});
+readFileMemo.unmemorized(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
+});
+```
+
+```bash
+[info] 2016-05-26T14:41:22.741Z true
+[info] 2016-05-26T14:41:22.746Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:41:22.748Z buf size:821
+[info] 2016-05-26T14:41:22.748Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:41:22.748Z buf size:821
 ```
 
 ### delete
@@ -126,43 +198,112 @@ const cacheGet = memorize(get);
 
 ```js
 const memorize = require('promise-memorize');
-const get = function() {
-  // .....
-};
-const cacheGet = memorize(get, 10 * 1000);
-cacheGet('vicanso').then((data) => {
-  // after get the data, the remove the promise from cache
-  cacheGet.delete('vicanso');
+const fs = require('fs');
+const path = require('path');
+const readFile = function(file, encoding) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, encoding, (err, data) => {
+      console.info(`get file:${file} encoding:${encoding}`);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
+const readFileMemo = memorize(readFile, 10 * 1000);
+const file = path.join(__dirname, './fs.js');
+
+readFileMemo(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
+  readFileMemo.delete(file);
+  return readFileMemo(file);
+}).then(buf => {
+  console.info(`buf size:${buf.length}`);
 });
+```
+
+```bash
+[info] 2016-05-26T14:41:41.459Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:41:41.461Z buf size:783
+[info] 2016-05-26T14:41:41.463Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:41:41.463Z buf size:783
 ```
 
 ### clear
 
 ```js
 const memorize = require('promise-memorize');
-const get = function() {
-  // .....
-};
-const cacheGet = memorize(get, 10 * 1000);
-cacheGet('vicanso').then((data) => {
-  // after get the data, the clear all the promise from cache
-  cacheGet.clear();
+const fs = require('fs');
+const path = require('path');
+const readFile = function(file, encoding) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, encoding, (err, data) => {
+      console.info(`get file:${file} encoding:${encoding}`);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
+const readFileMemo = memorize(readFile, 10 * 1000);
+const file = path.join(__dirname, './fs.js');
+
+readFileMemo(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
+  readFileMemo.clear();
+  return readFileMemo(file);
+}).then(buf => {
+  console.info(`buf size:${buf.length}`);
 });
+```
+
+```bash
+[info] 2016-05-26T14:41:59.607Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:41:59.610Z buf size:778
+[info] 2016-05-26T14:41:59.612Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:41:59.612Z buf size:778
 ```
 
 ### size
 
 ```js
 const memorize = require('promise-memorize');
-const get = function() {
-  // .....
-};
-const cacheGet = memorize(get, 10 * 1000);
-cacheGet('vicanso').then((data) => {
-  // size is 1
-  cacheGet.size();
+const fs = require('fs');
+const path = require('path');
+const readFile = function(file, encoding) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, encoding, (err, data) => {
+      console.info(`get file:${file} encoding:${encoding}`);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
+const readFileMemo = memorize(readFile, 10 * 1000);
+const file = path.join(__dirname, './fs.js');
+
+readFileMemo(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
+  console.info(`memorize size:${readFileMemo.size()}`);
 });
 ```
+
+```bash
+[info] 2016-05-26T14:42:16.935Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:42:16.937Z buf size:722
+[info] 2016-05-26T14:42:16.938Z memorize size:1
+```
+
 ### periodicClear
 
 Set interval to check whether the promise is expired in order to avoid memory leak 
@@ -171,15 +312,40 @@ Set interval to check whether the promise is expired in order to avoid memory le
 
 ```js
 const memorize = require('promise-memorize');
-const get = function() {
-  // .....
-};
-const cacheGet = memorize(get, 10 * 1000);
-cacheGet.periodicClear(10 * 1000);
-cacheGet('vicanso').then((data) => {
-  // size is 1
-  cacheGet.size();
+const fs = require('fs');
+const path = require('path');
+const readFile = function(file, encoding) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, encoding, (err, data) => {
+      console.info(`get file:${file} encoding:${encoding}`);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
+const readFileMemo = memorize(readFile, 10 * 1000);
+const file = path.join(__dirname, './fs.js');
+
+readFileMemo.periodicClear(1 * 1000);
+readFileMemo(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
+  console.info(`memorize size:${readFileMemo.size()}`);
 });
+
+setTimeout(() => {
+  console.info(`memorize size:${readFileMemo.size()}`);
+}, 12 * 1000);
+```
+
+```bash
+[info] 2016-05-26T14:42:32.977Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:42:32.979Z buf size:851
+[info] 2016-05-26T14:42:32.980Z memorize size:1
+[info] 2016-05-26T14:42:44.981Z memorize size:0
 ```
 
 ### events
@@ -193,26 +359,53 @@ Adds the listener function to the end of the listeners array for the event named
 
 ```js
 const memorize = require('promise-memorize');
-const get = function() {
-  // .....
-};
-const cacheGet = memorize(get, 10 * 1000);
-cacheGet.on('add', key => {
-  console.info(key);
+const fs = require('fs');
+const path = require('path');
+const readFile = function(file, encoding) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(file, encoding, (err, data) => {
+      console.info(`get file:${file} encoding:${encoding}`);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
+const readFileMemo = memorize(readFile, 10 * 1000);
+const file = path.join(__dirname, './fs.js');
+
+readFileMemo.on('add', key => {
+  console.info(`add:${key}`);
 });
-cacheGet.on('delete', key => {
-  console.info(key);
+readFileMemo.on('delete', key => {
+  console.info(`delete:${key}`);
 });
-cacheGet.on('resolve', key => {
-  console.info(key);
+readFileMemo.on('resolve', key => {
+  console.info(`resolve:${key}`);
 });
-cacheGet.on('reject', key => {
-  console.info(key);
+readFileMemo.on('reject', key => {
+  console.info(`reject:${key}`);
 });
-cacheGet('vicanso').then((data) => {
-  // size is 1
-  cacheGet.size();
+
+readFileMemo(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
+  readFileMemo.delete(file);
+  readFileMemo('a.js');
 });
+```
+
+```js
+[info] 2016-05-26T14:43:02.699Z add:/Users/tree/github/promise-memorize/examples/fs.js
+[info] 2016-05-26T14:43:02.703Z get file:/Users/tree/github/promise-memorize/examples/fs.js encoding:undefined
+[info] 2016-05-26T14:43:02.705Z resolve:/Users/tree/github/promise-memorize/examples/fs.js
+[info] 2016-05-26T14:43:02.705Z buf size:1004
+[info] 2016-05-26T14:43:02.705Z delete:/Users/tree/github/promise-memorize/examples/fs.js
+[info] 2016-05-26T14:43:02.706Z add:a.js
+[info] 2016-05-26T14:43:02.706Z get file:a.js encoding:undefined
+[info] 2016-05-26T14:43:02.707Z reject:a.js
 ```
 
 ## License
