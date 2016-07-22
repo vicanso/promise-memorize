@@ -158,18 +158,26 @@ describe('promise-memorize', () => {
         }, 10);
       });
     };
-    const get = memorize(originalGet, 50);
-    get.on('add', key => {
+    const memorizeGet = memorize(originalGet, 50);
+    memorizeGet.on('hit', key => {
+      const item = memorizeGet.get(key);
+      assert.equal(item.hits, 1);
       assert.equal(key, id);
     });
-    get.on('delete', key => {
+    memorizeGet.on('add', key => {
+      assert.equal(key, id);
+    });
+    memorizeGet.on('delete', key => {
       assert.equal(key, id);
       done();
     });
     const id = 'vicanso';
-    get(id).then(count => {
+    memorizeGet(id).then(count => {
       assert.equal(count, 0);
-      get.delete(id);
+      return memorizeGet(id);
+    }).then(count => {
+      assert.equal(count, 0);
+      memorizeGet.delete(id);
     });
   });
 

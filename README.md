@@ -55,9 +55,9 @@ readFileMemo(file).then(buf => {
 });
 readFileMemo(file).then(buf => {
   console.info(`buf size:${buf.length}`);
-  readFileMemo(file).then(buf => {
-    console.info(`buf size:${buf.length}`);
-  });
+  return readFileMemo(file);
+}).then(buf => {
+  console.info(`buf size:${buf.length}`);
 });
 ```
 
@@ -72,22 +72,6 @@ readFileMemo(file).then(buf => {
 Cache promise with ttl
 
 ```js
-const memorize = require('promise-memorize');
-const fs = require('fs');
-const path = require('path');
-const readFile = function(file, encoding) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(file, encoding, (err, data) => {
-      console.info(`get file:${file} encoding:${encoding}`);
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
-
 const readFileMemo = memorize(readFile, 10 * 1000);
 const file = path.join(__dirname, './fs.js');
 readFileMemo(file).then(buf => {
@@ -95,9 +79,9 @@ readFileMemo(file).then(buf => {
 });
 readFileMemo(file).then(buf => {
   console.info(`buf size:${buf.length}`);
-  readFileMemo(file).then(buf => {
-    console.info(`buf size:${buf.length}`);
-  });
+  return readFileMemo(file)
+}).then(buf => {
+  console.info(`buf size:${buf.length}`);
 });
 ```
 
@@ -112,22 +96,6 @@ Cache promise with hasher and ttl
 
 
 ```js
-const memorize = require('promise-memorize');
-const fs = require('fs');
-const path = require('path');
-const readFile = function(file, encoding) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(file, encoding, (err, data) => {
-      console.info(`get file:${file} encoding:${encoding}`);
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
-
 const readFileMemo = memorize(readFile, (file, encoding) => {
   return `${file}-${encoding}`;
 }, 10 * 1000);
@@ -137,9 +105,9 @@ readFileMemo(file, 'utf8').then(buf => {
 });
 readFileMemo(file, 'ascii').then(buf => {
   console.info(`buf size:${buf.length}`);
-  readFileMemo(file, 'ascii').then(buf => {
-    console.info(`buf size:${buf.length}`);
-  });
+  return readFileMemo(file, 'ascii');
+}).then(buf => {
+  console.info(`buf size:${buf.length}`);
 });
 ```
 
@@ -157,22 +125,6 @@ readFileMemo(file, 'ascii').then(buf => {
 get original function
 
 ```js
-const memorize = require('promise-memorize');
-const fs = require('fs');
-const path = require('path');
-const readFile = function(file, encoding) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(file, encoding, (err, data) => {
-      console.info(`get file:${file} encoding:${encoding}`);
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
-
 const readFileMemo = memorize(readFile, 10 * 1000);
 const file = path.join(__dirname, './fs.js');
 console.info(readFileMemo.unmemorized === readFile);
@@ -192,27 +144,35 @@ readFileMemo.unmemorized(file).then(buf => {
 [info] 2016-05-26T14:41:22.748Z buf size:821
 ```
 
-### delete
+### get
 
-- `key` delete cache promise
+get the cache promise item
+
+- `key` 
 
 ```js
-const memorize = require('promise-memorize');
-const fs = require('fs');
-const path = require('path');
-const readFile = function(file, encoding) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(file, encoding, (err, data) => {
-      console.info(`get file:${file} encoding:${encoding}`);
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
+const readFileMemo = memorize(readFile, 10 * 1000);
+const file = path.join(__dirname, './fs.js');
 
+readFileMemo.on('hit', key => {
+  // {promise: Promise, hit: 1, createdAt: 1469200404168}
+  const item = readFileMemo.get(key);
+});
+readFileMemo(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
+  return readFileMemo(file);
+}).then(buf => {
+  console.info(`buf size:${buf.length}`);
+});
+```
+
+### delete
+
+delete cache promise
+
+- `key` 
+
+```js
 const readFileMemo = memorize(readFile, 10 * 1000);
 const file = path.join(__dirname, './fs.js');
 
@@ -235,22 +195,6 @@ readFileMemo(file).then(buf => {
 ### clear
 
 ```js
-const memorize = require('promise-memorize');
-const fs = require('fs');
-const path = require('path');
-const readFile = function(file, encoding) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(file, encoding, (err, data) => {
-      console.info(`get file:${file} encoding:${encoding}`);
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
-
 const readFileMemo = memorize(readFile, 10 * 1000);
 const file = path.join(__dirname, './fs.js');
 
@@ -273,22 +217,6 @@ readFileMemo(file).then(buf => {
 ### size
 
 ```js
-const memorize = require('promise-memorize');
-const fs = require('fs');
-const path = require('path');
-const readFile = function(file, encoding) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(file, encoding, (err, data) => {
-      console.info(`get file:${file} encoding:${encoding}`);
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
-
 const readFileMemo = memorize(readFile, 10 * 1000);
 const file = path.join(__dirname, './fs.js');
 
@@ -311,22 +239,6 @@ Set interval to check whether the promise is expired in order to avoid memory le
 - `interval` chcek interval
 
 ```js
-const memorize = require('promise-memorize');
-const fs = require('fs');
-const path = require('path');
-const readFile = function(file, encoding) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(file, encoding, (err, data) => {
-      console.info(`get file:${file} encoding:${encoding}`);
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
-
 const readFileMemo = memorize(readFile, 10 * 1000);
 const file = path.join(__dirname, './fs.js');
 
@@ -358,25 +270,12 @@ Adds the listener function to the end of the listeners array for the event named
 
 
 ```js
-const memorize = require('promise-memorize');
-const fs = require('fs');
-const path = require('path');
-const readFile = function(file, encoding) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(file, encoding, (err, data) => {
-      console.info(`get file:${file} encoding:${encoding}`);
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
-    });
-  });
-}
-
 const readFileMemo = memorize(readFile, 10 * 1000);
 const file = path.join(__dirname, './fs.js');
 
+readFileMemo.on('hit', key => {
+  console.info(`hit:${key}`);
+});
 readFileMemo.on('add', key => {
   console.info(`add:${key}`);
 });

@@ -27,11 +27,14 @@ function memorize(fn, _hasher, _ttl) {
     const now = Date.now();
     // !ttl表示只是并发的请求使用相同的promise
     if (item && (!ttl || (now - item.createdAt < ttl))) {
+      item.hits++;
+      memorizeFn.emit('hit', key);
       return item.promise;
     }
     const p = fn.apply(this, args);
     map.set(key, {
       promise: p,
+      hits: 0,
       createdAt: now,
     });
     memorizeFn.emit('add', key);
@@ -52,7 +55,7 @@ function memorize(fn, _hasher, _ttl) {
     return p;
   };
   memorizeFn.unmemorized = fn;
-  memorizeFn.delete = (key) => {
+  memorizeFn.delete = key => {
     /* istanbul ignore if */
     if (!map.get(key)) {
       return null;
@@ -60,6 +63,7 @@ function memorize(fn, _hasher, _ttl) {
     memorizeFn.emit('delete', key);
     return map.delete(key);
   };
+  memorizeFn.get = key => map.get(key);
   memorizeFn.clear = () => map.clear();
   memorizeFn.size = () => map.size;
   let timer;
@@ -76,7 +80,7 @@ function memorize(fn, _hasher, _ttl) {
       arr = iter.next().value;
     }
   };
-  memorizeFn.periodicClear = (interval) => {
+  memorizeFn.periodicClear = interval => {
     /* istanbul ignore if */
     if (timer) {
       clearInterval(timer);

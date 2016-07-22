@@ -1,5 +1,5 @@
 {
-  "extends": "airbnb/base",
+  "extends": "airbnb",
   "rules": {
     "prefer-rest-params": 0,
     "strict": 0
