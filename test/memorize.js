@@ -9,6 +9,19 @@ const delay = (ms) => {
 }
 
 describe('promise-memorize', () => {
+  let globalMemorize;
+  it('set global periodic clear', (done) => {
+    memorize.periodicClear(100);
+    const get = memorize(() => {
+      return Promise.resolve(1);
+    }, 10);
+    globalMemorize = get;
+    get(1).then(count => {
+      assert.equal(count, 1);
+      done();
+    });
+  });
+
   it('cache promise for parallel call', (done) => {
     let count = 0;
     const originalGet = () => {
@@ -179,6 +192,10 @@ describe('promise-memorize', () => {
       assert.equal(count, 0);
       memorizeGet.delete(id);
     });
+  });
+
+  it('global periodic clear success', () => {
+    assert(!globalMemorize.get(1));
   });
 
 });

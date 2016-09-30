@@ -1,13 +1,33 @@
 'use strict';
+
 const util = require('util');
 const EventEmitter = require('events');
+
+const globalMap = new WeakMap();
+const keyList = [];
+
+function globalPeriodicClear() {
+  const removeList = [];
+  keyList.forEach((obj, i) => {
+    const fn = globalMap.get(obj);
+    if (util.isFunction(fn)) {
+      fn();
+    } else {
+      removeList.push(i);
+    }
+  });
+  removeList.reverse().forEach((index) => {
+    keyList.splice(index, 1);
+  });
+}
+
 function identity(value) {
   return value;
 }
 
 function get(is, arr, v) {
   let result;
-  arr.forEach(tmp => {
+  arr.forEach((tmp) => {
     if (is(tmp)) {
       result = tmp;
     }
@@ -22,12 +42,13 @@ function memorize(fn, _hasher, _ttl) {
   const emitter = new EventEmitter();
   const memorizeFn = function memorizeFn() {
     const args = Array.from(arguments);
+    /* eslint prefer-spread:0 */
     const key = hasher.apply(null, args);
     const item = map.get(key);
     const now = Date.now();
     // !ttl表示只是并发的请求使用相同的promise
     if (item && (!ttl || (now - item.createdAt < ttl))) {
-      item.hits++;
+      item.hits += 1;
       memorizeFn.emit('hit', key);
       return item.promise;
     }
@@ -55,7 +76,7 @@ function memorize(fn, _hasher, _ttl) {
     return p;
   };
   memorizeFn.unmemorized = fn;
-  memorizeFn.delete = key => {
+  memorizeFn.delete = (key) => {
     /* istanbul ignore if */
     if (!map.get(key)) {
       return null;
@@ -80,7 +101,10 @@ function memorize(fn, _hasher, _ttl) {
       arr = iter.next().value;
     }
   };
-  memorizeFn.periodicClear = interval => {
+  const obj = {};
+  keyList.push(obj);
+  globalMap.set(obj, periodicClear);
+  memorizeFn.periodicClear = (interval) => {
     /* istanbul ignore if */
     if (timer) {
       clearInterval(timer);
@@ -88,12 +112,14 @@ function memorize(fn, _hasher, _ttl) {
     timer = setInterval(periodicClear, interval).unref();
     return timer;
   };
-  Object.getOwnPropertyNames(EventEmitter.prototype).forEach(name => {
+  Object.getOwnPropertyNames(EventEmitter.prototype).forEach((name) => {
     if (name !== 'constructor' && util.isFunction(emitter[name])) {
       memorizeFn[name] = emitter[name].bind(emitter);
     }
   });
   return memorizeFn;
 }
+
+memorize.periodicClear = interval => setInterval(globalPeriodicClear, interval).unref();
 
 module.exports = memorize;

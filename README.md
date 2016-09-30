@@ -19,7 +19,7 @@ $ npm install promise-memorize
 
 ## API
 
-### memorize
+## memorize
 
 - `hasher` generate cache key, default is use the first parameter for key
 
@@ -305,6 +305,22 @@ readFileMemo(file).then(buf => {
 [info] 2016-05-26T14:43:02.706Z add:a.js
 [info] 2016-05-26T14:43:02.706Z get file:a.js encoding:undefined
 [info] 2016-05-26T14:43:02.707Z reject:a.js
+```
+
+## periodicClear
+
+global periodic clear for all memorize function, please call it before any promise-memorize(If use this).
+
+```js
+memorize.periodicClear(60 * 1000);
+const readFileMemo = memorize(readFile, 10 * 1000);
+const file = path.join(__dirname, './fs.js');
+// promise-memorize function can not call periodicClear because global periodicClear has been called.
+// readFileMemo.periodicClear(1 * 1000);
+readFileMemo(file).then(buf => {
+  console.info(`buf size:${buf.length}`);
+  console.info(`memorize size:${readFileMemo.size()}`);
+});
 ```
 
 ## License
