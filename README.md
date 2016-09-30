@@ -7,6 +7,8 @@
 
 Cache promise result for high-performance
 
+![](assets/promise-memorize.png)
+
 ## Examples
 
 View the [./examples](examples) directory for working examples. 
