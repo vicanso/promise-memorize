@@ -236,7 +236,7 @@ readFileMemo(file).then(buf => {
 
 ### periodicClear
 
-Set interval to check whether the promise is expired in order to avoid memory leak 
+Set interval to check whether the promise is expired in order to avoid memory leak and the function's cache won't be clear by global periodicClear.
 
 - `interval` chcek interval
 

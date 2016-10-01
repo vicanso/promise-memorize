@@ -1,6 +1,6 @@
 {
   "name": "promise-memorize",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "cache prmoise result for high-performance",
   "keywords": [
     "promise",

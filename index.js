@@ -3,22 +3,17 @@
 const util = require('util');
 const EventEmitter = require('events');
 
-const globalMap = new WeakMap();
-const keyList = [];
+const periodicClearList = [];
 
 function globalPeriodicClear() {
-  const removeList = [];
-  keyList.forEach((obj, i) => {
-    const fn = globalMap.get(obj);
-    if (util.isFunction(fn)) {
-      fn();
-    } else {
-      removeList.push(i);
-    }
-  });
-  removeList.reverse().forEach((index) => {
-    keyList.splice(index, 1);
-  });
+  periodicClearList.forEach(fn => fn());
+}
+
+function removeFromGlobalPeriodicClear(fn) {
+  const index = periodicClearList.indexOf(fn);
+  if (index !== -1) {
+    periodicClearList.splice(index, 1);
+  }
 }
 
 function identity(value) {
@@ -101,10 +96,9 @@ function memorize(fn, _hasher, _ttl) {
       arr = iter.next().value;
     }
   };
-  const obj = {};
-  keyList.push(obj);
-  globalMap.set(obj, periodicClear);
+  periodicClearList.push(periodicClear);
   memorizeFn.periodicClear = (interval) => {
+    removeFromGlobalPeriodicClear(periodicClear);
     /* istanbul ignore if */
     if (timer) {
       clearInterval(timer);
