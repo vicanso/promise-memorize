@@ -34,5 +34,5 @@ readFileMemo.on('reject', key => {
 readFileMemo(file).then(buf => {
   console.info(`buf size:${buf.length}`);
   readFileMemo.delete(file);
-  readFileMemo('a.js');
-});
+  return readFileMemo('a.js');
+}).catch(console.error);
