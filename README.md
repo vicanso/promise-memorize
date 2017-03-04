@@ -1,4 +1,4 @@
-# promise-memorize 
+# promise-memorize
 
 [![Build Status](https://travis-ci.org/vicanso/promise-memorize.svg?style=flat-square)](https://travis-ci.org/vicanso/promise-memorize)
 [![Coverage Status](https://img.shields.io/coveralls/vicanso/promise-memorize/master.svg?style=flat)](https://coveralls.io/r/vicanso/promise-memorize?branch=master)
@@ -11,13 +11,13 @@ Cache promise result for high-performance
 
 ## Examples
 
-View the [./examples](examples) directory for working examples. 
+View the [./examples](examples) directory for working examples.
 
 ## Installation
 
 ```bash
 $ npm install promise-memorize
-``` 
+```
 
 ## API
 
@@ -121,6 +121,18 @@ readFileMemo(file, 'ascii').then(buf => {
 [info] 2016-05-26T14:40:39.433Z buf size:912
 ```
 
+### setTTL
+
+set the ttl for promise cache
+
+```js
+const readFileMemo = memorize(readFile, 10 * 1000);
+// 10000
+console.info(readFileMemo.getTTL());
+readFileMemo.setTTL(20 * 1000);
+// 20000
+console.info(readFileMemo.getTTL());
+```
 
 ### memorize.unmemorized
 
@@ -150,7 +162,7 @@ readFileMemo.unmemorized(file).then(buf => {
 
 get the cache promise item
 
-- `key` 
+- `key`
 
 ```js
 const readFileMemo = memorize(readFile, 10 * 1000);
@@ -172,7 +184,7 @@ readFileMemo(file).then(buf => {
 
 delete cache promise
 
-- `key` 
+- `key`
 
 ```js
 const readFileMemo = memorize(readFile, 10 * 1000);
@@ -264,7 +276,7 @@ setTimeout(() => {
 
 ### events
 
-Adds the listener function to the end of the listeners array for the event named eventName. 
+Adds the listener function to the end of the listeners array for the event named eventName.
 
 - `eventName` The name of the event
 
