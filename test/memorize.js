@@ -22,6 +22,21 @@ describe('promise-memorize', () => {
     });
   });
 
+
+  it('set cache promise ttl', () => {
+    const originalGet = () => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve();
+        }, 10);
+      });
+    };
+    const get = memorize(originalGet, 10);
+    assert.equal(get.getTTL(), 10);
+    get.setTTL(20);
+    assert.equal(get.getTTL(), 20);
+  });
+
   it('cache promise for parallel call', (done) => {
     let count = 0;
     const originalGet = () => {

@@ -51,7 +51,7 @@ function handlePromiseCache(promiseCache) {
 
 function memorize(fn, _hasher, _ttl) {
   const map = new Map();
-  const ttl = get(Number.isInteger, [_hasher, _ttl], 0);
+  let ttl = get(Number.isInteger, [_hasher, _ttl], 0);
   const hasher = get(isFunction, [_hasher, _ttl], identity);
   const emitter = new EventEmitter();
   const memorizeFn = function memorizeFn() {
@@ -116,6 +116,12 @@ function memorize(fn, _hasher, _ttl) {
   memorizeFn.get = key => map.get(key);
   memorizeFn.clear = () => map.clear();
   memorizeFn.size = () => map.size;
+  memorizeFn.getTTL = () => ttl;
+  memorizeFn.setTTL = (v) => {
+    if (v) {
+      ttl = v;
+    }
+  };
   let timer;
   const periodicClear = () => {
     const iter = map.entries();
