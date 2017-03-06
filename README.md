@@ -134,6 +134,19 @@ readFileMemo.setTTL(20 * 1000);
 console.info(readFileMemo.getTTL());
 ```
 
+### setStale
+
+set the stale ttle for promise cache
+
+```js
+const readFileMemo = memorize(readFile, 10 * 1000);
+// 0
+console.info(readFileMemo.getStale());
+readFileMemo.setStale(2 * 1000);
+// 2000
+console.info(readFileMemo.getStale());
+```
+
 ### memorize.unmemorized
 
 get original function
