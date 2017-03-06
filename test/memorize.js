@@ -37,6 +37,36 @@ describe('promise-memorize', () => {
     assert.equal(get.getTTL(), 20);
   });
 
+  it('set stale for the cache promise', (done) => {
+    let count = 0;
+    const originalGet = () => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          resolve(count++);
+        }, 1);
+      });
+    };
+    const get = memorize(originalGet, 100);
+    get.setStale(10);
+    get().then((v) => {
+      assert.equal(v, 0);
+    }).catch(done);
+    setTimeout(() => {
+      get().then((v) => {
+        assert.equal(v, 0);
+      }).catch(done);
+      get().then((v) => {
+        assert.equal(v, 0);
+      }).catch(done);
+    }, 102);
+    setTimeout(() => {
+      get().then((v) => {
+        assert.equal(v, 1);
+        done();
+      }).catch(done);
+    }, 110);
+  });
+
   it('cache promise for parallel call', (done) => {
     let count = 0;
     const originalGet = () => {
@@ -48,14 +78,14 @@ describe('promise-memorize', () => {
     };
     const get = memorize(originalGet);
 
-    get().then(count => {
+    get().then((count) => {
       assert.equal(count, 0);
     }).catch(done);
 
-    get().then(count => {
+    get().then((count) => {
       assert.equal(count, 0);
       return get();
-    }).then(count => {
+    }).then((count) => {
       assert.equal(count, 1);
       done();
     }).catch(done);
